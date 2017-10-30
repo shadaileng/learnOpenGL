@@ -1,0 +1,4 @@
+plane ./res/plane/plane.property
+cube ./res/cube/cube.property
+tong ./res/tong/tong.property
+obj ./res/nanosuit/nanosuit.property

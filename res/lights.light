@@ -1,0 +1,24 @@
+directionLight directionLight
+directionLight1.direction 1.0 -1.0 0.0
+directionLight1.ambient 0.5
+directionLight1.diffuse 0.7
+directionLight1.specular 1.0
+
+pointLight pointLight
+pointLight1.position 5.0
+pointLight1.ambient 0.5
+pointLight1.diffuse 0.7
+pointLight1.specular 1.0
+pointLight1.constant 1.0
+pointLight1.linear 0.09
+pointLight1.quadratic 0.032
+
+spotLight spotLight
+spotLight1.ambient 0.5
+spotLight1.diffuse 0.7
+spotLight1.specular 1.0
+spotLight1.constant 1.0
+spotLight1.linear 0.09
+spotLight1.quadratic 0.032
+spotLight1.cutoff 12.5
+spotLight1.outcutoff 17.5

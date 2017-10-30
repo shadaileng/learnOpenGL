@@ -1,0 +1,8 @@
+obj ./res/nanosuit/nanosuit.obj
+vs ./res/vertex.vs
+fs ./res/fragment.fs
+position 0.0 0.0 0.0
+scale 0.3 0.3 0.3
+rotateX 0.0
+rotateY 0.0
+rotateZ 0.0

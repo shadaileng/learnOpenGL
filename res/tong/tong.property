@@ -1,0 +1,8 @@
+obj ./res/tong/tong.obj
+vs ./res/vertex.vs
+fs ./res/fragment.fs
+position -2.0 1.0 0.0
+scale 1.0 1.0 1.0
+rotateX 0.0
+rotateY 0.0
+rotateZ 0.0

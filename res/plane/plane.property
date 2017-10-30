@@ -1,0 +1,8 @@
+obj ./res/plane/plane.obj
+vs ./res/vertex.vs
+fs ./res/fragment.fs
+position 0.0 0.0 0.0
+scale 30.0 30.0 30.0
+rotateX 0.0
+rotateY 0.0
+rotateZ 0.0
