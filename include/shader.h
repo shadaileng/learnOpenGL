@@ -5,7 +5,7 @@
 class Shader
 {
 public:
-	Shader(string,string);
+	Shader(string,string, string gs = "#undefine");
 	~Shader();
 	void use();
 	int getProgram();
@@ -17,6 +17,7 @@ public:
 private:
 	int id;
 	void getString(const char* path, char* buf);
+	void checkStatus(int, string, string);
 	
 };
 

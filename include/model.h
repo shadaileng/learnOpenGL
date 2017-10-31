@@ -26,18 +26,23 @@ class Model{
 		void draw(glm::mat4 projection, glm::mat4 view);
 		void setShader(Shader&);
 		void updateShader(glm::mat4 projection = glm::mat4(), glm::mat4 view = glm::mat4());
-		void setModels(vector<glm::mat4> models);
+		void addModels(glm::mat4 model);
 		void setPosition(glm::vec3 position = glm::vec3(0.0f));
 		void setPosition(float, float, float);
 		void setRotateX(float angle = 0.0f);
 		void setRotateY(float angle = 0.0f);
 		void setRotateZ(float angle = 0.0f);
+		void setType(int type = 2);
+		void setCount(int count = 1);
 		void setScale(glm::vec3 scale = glm::vec3(1.0f));
 		void setScale(float, float, float);
+		void setID(string);
+		string getID();
 		void addLight(Light&);
 		void addLight(Light*);
 		void setViewPosition(glm::vec3);
 	private:
+		string id;
 		vector<Mesh> meshes;
 		vector<Texture> textureLoaded;
 		string directory;
@@ -55,6 +60,8 @@ class Model{
 		glm::vec3 scale;
 		float rotateX, rotateY, rotateZ;
 		vector<Light*> lights;
+		int type;
+		int count;
 };
 
 #endif

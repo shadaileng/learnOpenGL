@@ -2,8 +2,9 @@
 
 Mesh::Mesh(vector<Vertex> vertices, vector<unsigned int> indexs, vector<Texture> textures):vertices(vertices), indexs(indexs), textures(textures){
 	this->initMesh();
+	flag = 3;
 }
-void Mesh::draw(Shader shader){
+void Mesh::draw(Shader shader, int type, int count){
 	unsigned int diffuseN = 1;
 	unsigned int specularN = 1;
 	unsigned int normalN = 1;
@@ -27,7 +28,20 @@ void Mesh::draw(Shader shader){
 		glBindTexture(GL_TEXTURE_2D, textures[i].id);
 	}
 	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, indexs.size(), GL_UNSIGNED_INT, 0);
+	switch(type){
+		case 0:
+			glDrawElements(GL_POINTS, indexs.size(), GL_UNSIGNED_INT, 0);
+			break;
+		case 1:
+			glDrawElements(GL_LINES, indexs.size(), GL_UNSIGNED_INT, 0);
+			break;
+		case 2:
+			glDrawElements(GL_TRIANGLES, indexs.size(), GL_UNSIGNED_INT, 0);
+			break;
+		case 3:
+			glDrawElementsInstanced(GL_TRIANGLES, indexs.size(), GL_UNSIGNED_INT, 0, count);
+			break;
+	}
 	glBindVertexArray(0);
 	glActiveTexture(GL_TEXTURE0);
 }
@@ -50,5 +64,24 @@ void Mesh::initMesh(){
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
 	glEnableVertexAttribArray(2);
 	
+	glBindVertexArray(0);
+}
+void Mesh::addVertexAttribArrayByMat4(){
+	// GLsizei vec4Size = sizeof(glm::vec4);
+	glBindVertexArray(vao);
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+	glEnableVertexAttribArray(6);
+	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+	glVertexAttribDivisor(3, 1);
+	glVertexAttribDivisor(4, 1);
+	glVertexAttribDivisor(5, 1);
+	glVertexAttribDivisor(6, 1);
+
 	glBindVertexArray(0);
 }

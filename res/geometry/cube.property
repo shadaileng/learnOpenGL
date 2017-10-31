@@ -1,0 +1,10 @@
+obj ./res/cube/cube.obj
+vs ./res/vertex.vs
+fs ./res/fragment.fs
+gs ./res/geometry/geometry.gs
+position 3.0
+scale 1.0
+rotateX 0.0
+rotateY 0.0
+rotateZ 0.0
+type 2

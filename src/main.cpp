@@ -113,6 +113,13 @@ int main(int arg, char* args[]){
 		for(int i = 0, l = lights.size(); i < l; i++){
 			model.addLight(lights[i]);
 		}
+		if(model.getID() == "instance"){
+			for(int x = -10; x < 10; x += 2){
+				for(int y = -10; y < 10; y += 2){
+					model.addModels(transformModel(glm::vec3((float)x / 10 + 0.1, (float)y / 10 + 0.1, 0.0f)));
+				}
+			}
+		}
 		models.push_back(model);
 		cout<<" complete."<<endl;
 	}

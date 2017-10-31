@@ -1,10 +1,8 @@
 #version 330 core
 
-in VS_OUT{
-	vec2 texcoord;
-	vec3 normal;
-	vec3 fragPos;
-} fs_in;
+in vec2 texcoord;
+in vec3 normal;
+in vec3 fragPos;
 
 out vec4 color_;
 
@@ -61,34 +59,34 @@ void main(){
 vec4 directionLights(Light light){
 	
 	float ambiemt_factor = 1.0;
-	float diffuse_factor = max(dot(normalize(-light.direction), normalize(fs_in.normal)), 0.0);
-	float specular_factor = pow(max(dot(reflect(light.direction, fs_in.normal), normalize(viewPosition - fs_in.fragPos)), 0.0), 1);
+	float diffuse_factor = max(dot(normalize(-light.direction), normalize(normal)), 0.0);
+	float specular_factor = pow(max(dot(reflect(light.direction, normal), normalize(viewPosition - fragPos)), 0.0), 1);
 
 	vec3 ambient_ = ambiemt_factor * light.ambient;
 	vec3 diffuse_ = diffuse_factor * light.diffuse;
 	vec3 specular_ = specular_factor * light.specular;
 	
-	vec4 ambient = texture(material.texture_diffuse1, fs_in.texcoord) * vec4(ambient_, 1.0);
-	vec4 diffuse = texture(material.texture_diffuse1, fs_in.texcoord) * vec4(diffuse_, 1.0);
-	vec4 specular = texture(material.texture_specular1, fs_in.texcoord) * vec4(specular_, 1.0);
+	vec4 ambient = texture(material.texture_diffuse1, texcoord) * vec4(ambient_, 1.0);
+	vec4 diffuse = texture(material.texture_diffuse1, texcoord) * vec4(diffuse_, 1.0);
+	vec4 specular = texture(material.texture_specular1, texcoord) * vec4(specular_, 1.0);
 	return ambient + diffuse + specular;
 
 }
 vec4 pointLights(Light light){
 	
 	float ambiemt_factor = 1.0;
-	float diffuse_factor = max(dot(normalize(light.position - fs_in.fragPos), normalize(fs_in.normal)), 0.0);
-	float specular_factor = pow(max(dot((reflect(fs_in.fragPos - light.position, fs_in.normal)), normalize(viewPosition - fs_in.fragPos)), 0.0), 1);
+	float diffuse_factor = max(dot(normalize(light.position - fragPos), normalize(normal)), 0.0);
+	float specular_factor = pow(max(dot((reflect(fragPos - light.position, normal)), normalize(viewPosition - fragPos)), 0.0), 1);
 
 	vec3 ambient_ = ambiemt_factor * light.ambient;
 	vec3 diffuse_ = diffuse_factor * light.diffuse;
 	vec3 specular_ = specular_factor * light.specular;
 	
-	vec4 ambient = texture(material.texture_diffuse1, fs_in.texcoord) * vec4(ambient_, 1.0);
-	vec4 diffuse = texture(material.texture_diffuse1, fs_in.texcoord) * vec4(diffuse_, 1.0);
-	vec4 specular = texture(material.texture_specular1, fs_in.texcoord) * vec4(specular_, 1.0);
+	vec4 ambient = texture(material.texture_diffuse1, texcoord) * vec4(ambient_, 1.0);
+	vec4 diffuse = texture(material.texture_diffuse1, texcoord) * vec4(diffuse_, 1.0);
+	vec4 specular = texture(material.texture_specular1, texcoord) * vec4(specular_, 1.0);
 
-	float distance = length(light.position - fs_in.fragPos);
+	float distance = length(light.position - fragPos);
 	float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * distance * distance);
 
 	return (ambient + diffuse + specular) * attenuation;
@@ -97,21 +95,21 @@ vec4 pointLights(Light light){
 vec4 spotLights(Light light){
 	
 	float ambiemt_factor = 1.0;
-	float diffuse_factor = max(dot(normalize(-light.direction), normalize(fs_in.normal)), 0.0);
-	float specular_factor = pow(max(dot((reflect(light.direction, fs_in.normal)), normalize(viewPosition - fs_in.fragPos)), 0.0), 32);
+	float diffuse_factor = max(dot(normalize(-light.direction), normalize(normal)), 0.0);
+	float specular_factor = pow(max(dot((reflect(light.direction, normal)), normalize(viewPosition - fragPos)), 0.0), 32);
 
 	vec3 ambient_ = ambiemt_factor * light.ambient;
 	vec3 diffuse_ = diffuse_factor * light.diffuse;
 	vec3 specular_ = specular_factor * light.specular;
 	
-	vec4 ambient = texture(material.texture_diffuse1, fs_in.texcoord) * vec4(ambient_, 1.0);
-	vec4 diffuse = texture(material.texture_diffuse1, fs_in.texcoord) * vec4(diffuse_, 1.0);
-	vec4 specular = texture(material.texture_specular1, fs_in.texcoord) * vec4(specular_, 1.0);
+	vec4 ambient = texture(material.texture_diffuse1, texcoord) * vec4(ambient_, 1.0);
+	vec4 diffuse = texture(material.texture_diffuse1, texcoord) * vec4(diffuse_, 1.0);
+	vec4 specular = texture(material.texture_specular1, texcoord) * vec4(specular_, 1.0);
 
-	float distance = length(light.position - fs_in.fragPos);
+	float distance = length(light.position - fragPos);
 	float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * distance * distance);
 
-	float theta = dot(fs_in.fragPos - light.position, light.direction);
+	float theta = dot(fragPos - light.position, light.direction);
 	float gama = light.cutoff - light.outcutoff;
 	float intensity = clamp((theta - light.outcutoff) / gama, 0.0, 1.0);
 

@@ -1,0 +1,12 @@
+id instance
+obj ./res/geometry/plane.obj
+vs ./res/instance/vertex.vs
+fs ./res/fragment.fs
+#gs ./res/geometry/geometry.gs
+#position -3.0 2.0
+#scale 1.0
+#rotateX 0.0
+#rotateY 0.0
+#rotateZ 0.0
+type 3
+count 100

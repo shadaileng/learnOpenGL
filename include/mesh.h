@@ -32,10 +32,13 @@ class Mesh{
 		vector<unsigned int> indexs; 
 		vector<Texture> textures;
 		Mesh(vector<Vertex> vertices, vector<unsigned int> indexs, vector<Texture> textures);
-		void draw(Shader shader);
+		void draw(Shader shader, int, int count = 1);
+		void addVertexAttribArrayByMat4();
 	private:
 		unsigned int vao, vbo, ebo;
+		int flag;
 		void initMesh();
+		
 };
 
 

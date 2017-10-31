@@ -1,7 +1,5 @@
 #include "shader.h"
-Shader::Shader(string vs,string fs){
-	char log[1024];
-	int success;
+Shader::Shader(string vs,string fs, string gs){
 	string src;
 	
 	if(vs == "#undefine"){
@@ -22,11 +20,12 @@ Shader::Shader(string vs,string fs){
 	int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vss, NULL);
 	glCompileShader(vertexShader);
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if(!success){
-		glGetShaderInfoLog(vertexShader, 1024, NULL, log);
-		cout<<"Failed to compile vertexShader: "<<vs<<endl<<"error: "<<log<<endl;
-	}
+	checkStatus(vertexShader, "SHADER", vs);
+	// glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	// if(!success){
+	// 	glGetShaderInfoLog(vertexShader, 1024, NULL, log);
+	// 	cout<<"Failed to compile vertexShader: "<<vs<<endl<<"error: "<<log<<endl;
+	// }
 	
 	if(fs == "#undefine"){
 		src = "#version 330 core\n"
@@ -41,21 +40,36 @@ Shader::Shader(string vs,string fs){
 	int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fss, NULL);
 	glCompileShader(fragmentShader);
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if(!success){
-		glGetShaderInfoLog(fragmentShader, 1024, NULL, log);
-		cout<<"Failed to compile fragmentShader: "<<fs<<endl<<"error: "<<log<<endl;
+	checkStatus(fragmentShader, "SHADER", fs);
+	// glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	// if(!success){
+	// 	glGetShaderInfoLog(fragmentShader, 1024, NULL, log);
+	// 	cout<<"Failed to compile fragmentShader: "<<fs<<endl<<"error: "<<log<<endl;
+	// }
+	int geometryShader = -1;
+	if(gs != "#undefine"){
+		src = loadFile(gs);
+		const char* gss = src.c_str();
+		geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+		glShaderSource(geometryShader, 1, &gss, NULL);
+		glCompileShader(geometryShader);
+		checkStatus(geometryShader, "SHADER", gs);
 	}
 
 	id = glCreateProgram();
 	glAttachShader(id, vertexShader);
 	glAttachShader(id, fragmentShader);
-	glLinkProgram(id);
-	glGetProgramiv(id, GL_LINK_STATUS, &success);
-	if(!success){
-		glGetProgramInfoLog(id, 1024, NULL, log);
-		cout<<"Failed to link vertexShader: "<<vs<<" and fragmentShader: "<<fs<<endl<<"error: "<<log<<endl;
+
+	if(geometryShader != -1){
+		glAttachShader(id, geometryShader);
 	}
+	glLinkProgram(id);
+	checkStatus(0, "PROGRAM", vs + " " + gs + " and " + fs);
+	// glGetProgramiv(id, GL_LINK_STATUS, &success);
+	// if(!success){
+	// 	glGetProgramInfoLog(id, 1024, NULL, log);
+	// 	cout<<"Failed to link vertexShader: "<<vs<<" and fragmentShader: "<<fs<<endl<<"error: "<<log<<endl;
+	// }
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 }
@@ -81,4 +95,21 @@ void Shader::setFloat3(string name, float val1, float val2, float val3){
 }
 void Shader::setFloat3(string name, glm::vec3 val){
 	glUniform3f(glGetUniformLocation(id, name.c_str()), val.x, val.y, val.z);
+}
+void Shader::checkStatus(int shader, string type, string name){
+	char log[1024];
+	int success = -1;
+	if(type == "SHADER"){
+		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+		if(!success){
+			glGetShaderInfoLog(shader, 1024, NULL, log);
+			cout<<"Failed to compile shaer: "<<name<<endl<<"error: "<<log<<endl;
+		}
+	}else if(type == "PROGRAM"){
+		glGetProgramiv(id, GL_LINK_STATUS, &success);
+		if(!success){
+			glGetProgramInfoLog(id, 1024, NULL, log);
+			cout<<"Failed to link shader: "<<name<<endl<<"error: "<<log<<endl;
+		}
+	}
 }

@@ -3,7 +3,6 @@ layout (location=0) in vec3 pos;
 layout (location=1) in vec3 normal_;
 layout (location=2) in vec2 texcoord_;
 layout (location=3) in mat4 model;
-
 out VS_OUT{
 	vec2 texcoord;
 	vec3 normal;

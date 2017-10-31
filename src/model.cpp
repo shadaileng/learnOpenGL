@@ -6,7 +6,10 @@ position(glm::vec3(0.0f)),
 scale(glm::vec3(1.0f)),
 rotateX(0.0f),
 rotateY(0.0f),
-rotateZ(0.0f)
+rotateZ(0.0f),
+type(2),
+count(1),
+id("")
 {
 	map<string, vector<string> > propertices = getPropertices(path);
 	position = propertices.count("position") ? vector2vec3(propertices["position"]) : position;
@@ -14,10 +17,17 @@ rotateZ(0.0f)
 	rotateX = propertices.count("rotateX") ? vector2float(propertices["rotateX"]) : rotateX;
 	rotateY = propertices.count("rotateY") ? vector2float(propertices["rotateY"]) : rotateY;
 	rotateZ = propertices.count("rotateZ") ? vector2float(propertices["rotateZ"]) : rotateZ;
+	type = propertices.count("type") ? vector2float(propertices["type"]) : type;
+	if(type < 3){
+		models.push_back(transformModel(position, scale, rotateX, rotateY, rotateZ));
+	}
+	count = propertices.count("count") ? vector2float(propertices["count"]) : count;
+	id = propertices.count("id") ? propertices["id"][0] : id;
 	
 	string vs = propertices.count("vs") ? propertices["vs"][0] : "#undefine";
 	string fs = propertices.count("fs") ? propertices["fs"][0] : "#undefine";
-	shader = new Shader(vs.c_str(), fs.c_str());
+	string gs = propertices.count("gs") ? propertices["gs"][0] : "#undefine";
+	shader = new Shader(vs.c_str(), fs.c_str(), gs.c_str());
 	string obj = propertices.count("obj") ? propertices["obj"][0] : "#undefine";
 	if(obj == "#undefine"){
 		vs = "#undefine";
@@ -31,13 +41,9 @@ void Model::draw(){
 	shader->use();
 	shader->setMat4("projection", projection);
 	shader->setMat4("view", view);
-	glm::mat4 model = glm::mat4();
-	model = glm::translate(model, position);
-	model = glm::scale(model, scale);
-	model = glm::rotate(model, glm::radians(rotateX), glm::vec3(1.0f, 0.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(rotateY), glm::vec3(0.0f, 1.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(rotateZ), glm::vec3(0.0f, 0.0f, 1.0f));
-	shader->setMat4("model", model);
+	// for(int i = 0, l = models.size(); i < l; i++){
+	// 	shader->setMat4("model[" + int2str(i) + "]", models[i]);
+	// }
 	for(int i = 0, l = lights.size(); i < l; i++){
 		Light* light = lights[i];
 		shader->setFloat3(light->getLightType() + ".direction", light->getDirection());
@@ -52,8 +58,13 @@ void Model::draw(){
 		shader->setFloat1(light->getLightType() + ".cutoff", light->getCutoff());
 		shader->setFloat1(light->getLightType() + ".outcutoff", light->getOutcutoff());
 	}
+	unsigned int vbo_tmp;
+	glGenBuffers(1, &vbo_tmp);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_tmp);
+	glBufferData(GL_ARRAY_BUFFER, count * sizeof(glm::mat4), &models[0], GL_STATIC_DRAW);
 	for(int i = 0, l = meshes.size(); i < l; i++){
-		meshes[i].draw(*(this->shader));
+		meshes[i].addVertexAttribArrayByMat4();
+		meshes[i].draw(*(this->shader), type, count);
 	}
 }
 void Model::draw(glm::mat4 projection, glm::mat4 view){
@@ -266,8 +277,8 @@ unsigned int Model::TextureFromFile(const char* path, const string &directory){
 void Model::setShader(Shader& shader){
 	this->shader = &shader;
 }
-void Model::setModels(vector<glm::mat4> models){
-	this->models = models;
+void Model::addModels(glm::mat4 model){
+	this->models.push_back(model);
 }
 void Model::setPosition(glm::vec3 position){
 	this->position = position;
@@ -287,8 +298,20 @@ void Model::setRotateZ(float angle){
 void Model::setScale(glm::vec3 scale){
 	this->scale = scale;
 }
+void Model::setType(int type){
+	this->type = type;
+}
+void Model::setCount(int count){
+	this->count = count;
+}
 void Model::setScale(float x, float y, float z){
 	this->scale = glm::vec3(x, y, z);
+}
+void Model::setID(string id){
+	this->id = id;
+}
+string Model::getID(){
+	return this->id;
 }
 void Model::addLight(Light& light){
 	lights.push_back(&light);

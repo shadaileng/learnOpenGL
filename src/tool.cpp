@@ -64,4 +64,13 @@ string int2str(const int &int_temp)
         stringstream stream;  
         stream<<int_temp;  
         return stream.str();   //此处也可以用 stream>>string_temp  
-}  
+} 
+glm::mat4 transformModel(glm::vec3 position, glm::vec3 scale, float rotateX, float rotateY, float rotateZ){
+	glm::mat4 model = glm::mat4();
+	model = glm::translate(model, position);
+	model = glm::scale(model, scale);
+	model = glm::rotate(model, glm::radians(rotateX), glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(rotateY), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(rotateZ), glm::vec3(0.0f, 0.0f, 1.0f));
+	return model;
+}
