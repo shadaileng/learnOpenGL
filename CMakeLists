@@ -1,0 +1,46 @@
+#CMake最低版本
+cmake_minimum_required (VERSION 2.8)
+
+#项目名称
+project(Demo1)
+
+#设置当前项目版本
+set (Demo_VERSION_MAJOR 1)
+set (Demo_VERSION_MINOR 0)
+
+#头文件目录
+include_directories(${PROJECT_SOURCE_DIR}/include)
+
+#设置源文件路径
+#set(DIR_SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp)
+#递归设置源文件路径
+#file(GLOB_RECURSE DIR_SRCS ${PROJECT_BINARY_DIR}/src/*.cpp)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/ DIR_SRCS)
+#设置链接库
+set (EXTRA_LIBS ${EXTRA_LIBS} glfw3 GL)
+
+if(UNIX AND NOT APPLE)
+	set (EXTRA_LIBS ${EXTRA_LIBS} X11 pthread Xrandr Xi dl Xxf86vm Xinerama Xcursor rt)
+endif()
+
+#指定库文件路径
+#link_directories(${CMAKE_INSTALL_PREFIX}/lib)
+
+#生成的可执行文件路径
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+
+#根据源文件生成名称为Demo的可执行文件
+add_executable(Demo ${DIR_SRCS})
+
+#链接库
+target_link_libraries (Demo  ${EXTRA_LIBS})
+
+#设置安装路径 
+install(TARGETS Demo RUNTIME DESTINATION bin)
+
+#CPack 生成二进制安装包 cpack -C CPackSourceConfig.cmake
+include (InstallRequiredSystemLibraries)
+set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/License.txt")
+set (CPACK_PACKAGE_VERSION_MAJOR "${Demo_VERSION_MAJOR}")
+set (CPACK_PACKAGE_VERSION_MINOR "${Demo_VERSION_MINOR}")
+include (CPack)
